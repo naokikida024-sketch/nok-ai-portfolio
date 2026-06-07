@@ -111,6 +111,41 @@
     .nav.scrolled .nav__links a { color: var(--muted); }
     .nav.scrolled .nav__links a:hover { color: var(--text); }
 
+    /* ── Mobile Nav ── */
+    .nav__toggle {
+      display: none;
+      background: none; border: none; cursor: pointer;
+      font-size: 1.3rem; color: rgba(255,255,255,0.85);
+      line-height: 1; padding: 4px;
+      transition: color .3s;
+    }
+    .nav.scrolled .nav__toggle { color: var(--text); }
+    .nav__overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 200;
+      background: var(--bg);
+      flex-direction: column; align-items: center; justify-content: center; gap: 40px;
+      opacity: 0; pointer-events: none;
+      transition: opacity .5s var(--ease);
+    }
+    .nav__overlay.open { display: flex; opacity: 1; pointer-events: auto; }
+    .nav__overlay a {
+      font-size: 1.3rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--text); text-decoration: none;
+      transition: color .25s;
+    }
+    .nav__overlay a:hover { color: var(--accent2); }
+    .nav__overlay-close {
+      position: absolute; top: 24px; right: 28px;
+      background: none; border: none; cursor: pointer;
+      font-size: 1.4rem; color: var(--muted);
+      line-height: 1;
+    }
+    @media (max-width: 560px) {
+      .nav__links { display: none; }
+      .nav__toggle { display: block; }
+    }
+
     /* ── Hero ── */
     .hero {
       position: relative; min-height: 100svh;
@@ -451,7 +486,17 @@
     <li><a href="#process">Process</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
+  <button class="nav__toggle" id="navToggle" aria-label="メニューを開く">☰</button>
 </nav>
+
+<!-- Mobile overlay menu -->
+<div class="nav__overlay" id="navOverlay">
+  <button class="nav__overlay-close" id="navClose" aria-label="閉じる">✕</button>
+  <a href="#about" class="nav__overlay-link">About</a>
+  <a href="#works" class="nav__overlay-link">Works</a>
+  <a href="#process" class="nav__overlay-link">Process</a>
+  <a href="#contact" class="nav__overlay-link">Contact</a>
+</div>
 
 <!-- Hero -->
 <section class="hero">
@@ -800,6 +845,16 @@
     if (e.target === this) closeModal();
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  /* ── Mobile nav ── */
+  const navToggle = document.getElementById('navToggle');
+  const navOverlay = document.getElementById('navOverlay');
+  const navClose = document.getElementById('navClose');
+  navToggle.addEventListener('click', () => navOverlay.classList.add('open'));
+  navClose.addEventListener('click', () => navOverlay.classList.remove('open'));
+  document.querySelectorAll('.nav__overlay-link').forEach(a => {
+    a.addEventListener('click', () => navOverlay.classList.remove('open'));
+  });
 </script>
 
 </body>
