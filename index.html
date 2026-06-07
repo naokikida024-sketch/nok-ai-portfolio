@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>生成AIで成長してきた軌跡 | NOK Portfolio</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #FDFAF6;
+      --bg2:       #F5EFE8;
+      --accent:    #E8B4C0;
+      --accent2:   #D4A5A5;
+      --text:      #2C2828;
+      --muted:     #8C7E7E;
+      --light:     #BFB5B5;
+      --border:    #E8E0D8;
+      --shadow:    0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Helvetica Neue', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+      font-weight: 300;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.9;
+      font-size: 15px;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 56px;
+      height: 60px;
+      background: rgba(253,250,246,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-weight: 400;
+      font-size: 0.78rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+    nav ul { list-style: none; display: flex; gap: 40px; }
+    nav a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      position: relative;
+      padding-bottom: 2px;
+      transition: color .3s;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 1px;
+      background: var(--accent2);
+      transition: width .35s ease-out;
+    }
+    nav a:hover { color: var(--text); }
+    nav a:hover::after { width: 100%; }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 120px 56px 80px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .hero-sub {
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--light);
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .hero-sub::before {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1px;
+      background: var(--accent);
+    }
+    .hero h1 {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-weight: 300;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      line-height: 1.65;
+      letter-spacing: 0.06em;
+      color: var(--text);
+      margin-bottom: 36px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent2);
+      font-weight: 400;
+    }
+    .hero-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      max-width: 420px;
+      line-height: 2.1;
+      letter-spacing: 0.04em;
+    }
+    .hero-scroll {
+      position: absolute;
+      bottom: 48px;
+      left: 56px;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--light);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .hero-scroll::after {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 1px;
+      background: var(--light);
+      animation: scrollLine 2s ease-in-out infinite;
+    }
+    @keyframes scrollLine {
+      0%, 100% { width: 40px; opacity: 0.4; }
+      50% { width: 60px; opacity: 1; }
+    }
+
+    /* ── Section ── */
+    .section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 96px 56px;
+    }
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--light);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 64px;
+    }
+    .section-label::before {
+      content: '';
+      width: 24px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    /* ── Works ── */
+    .works-list { display: flex; flex-direction: column; gap: 96px; }
+
+    .work-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .8s ease-out, transform .8s ease-out;
+    }
+    .work-item.visible { opacity: 1; transform: translateY(0); }
+    .work-item.reverse { direction: rtl; }
+    .work-item.reverse > * { direction: ltr; }
+
+    /* Image side */
+    .work-visuals {}
+    .work-visuals-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .work-visuals-grid .span2 { grid-column: 1 / -1; }
+
+    .work-img-wrap {
+      overflow: hidden;
+      border-radius: 2px;
+      background: var(--bg2);
+    }
+    .work-img-wrap.span2 { grid-column: 1 / -1; }
+    .work-img {
+      width: 100%;
+      display: block;
+      aspect-ratio: 16/10;
+      object-fit: cover;
+      cursor: pointer;
+      transition: transform .7s cubic-bezier(0.25,0.46,0.45,0.94), opacity .3s;
+    }
+    .work-img-wrap:hover .work-img { transform: scale(1.03); }
+
+    .work-img-single {
+      overflow: hidden;
+      border-radius: 2px;
+      background: var(--bg2);
+      display: flex;
+      justify-content: center;
+    }
+    .work-img-single img {
+      display: block;
+      max-height: 520px;
+      width: auto;
+      max-width: 100%;
+      object-fit: cover;
+      cursor: pointer;
+      transition: transform .7s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    .work-img-single:hover img { transform: scale(1.03); }
+
+    /* Text side */
+    .work-info {}
+    .work-num {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--light);
+      margin-bottom: 20px;
+    }
+    .work-tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      border: 1px solid var(--accent);
+      padding: 4px 14px;
+      margin-bottom: 20px;
+    }
+    .work-title {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-weight: 300;
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      letter-spacing: 0.05em;
+      line-height: 1.6;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .work-desc {
+      font-size: 0.84rem;
+      color: var(--muted);
+      line-height: 2.1;
+      margin-bottom: 28px;
+      letter-spacing: 0.02em;
+    }
+    .work-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tool-chip {
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 4px 12px;
+      background: transparent;
+    }
+
+    /* ── Divider ── */
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* ── About ── */
+    .about-section { background: var(--bg2); }
+    .about-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 96px 56px;
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .about-left h2 {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-weight: 300;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      letter-spacing: 0.06em;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+    .about-left p {
+      font-size: 0.86rem;
+      color: var(--muted);
+      line-height: 2.2;
+      letter-spacing: 0.02em;
+    }
+    .about-block { margin-bottom: 36px; }
+    .about-block:last-child { margin-bottom: 0; }
+    .about-block-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--light);
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .chip {
+      font-size: 0.76rem;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      padding: 6px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+    }
+
+    /* ── Contact ── */
+    .contact-section {
+      text-align: center;
+      padding: 120px 56px;
+    }
+    .contact-section .section-label {
+      justify-content: center;
+      margin-bottom: 48px;
+    }
+    .contact-section .section-label::before { display: none; }
+    .contact-section h2 {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-weight: 300;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      letter-spacing: 0.08em;
+      line-height: 1.6;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .contact-section p {
+      font-size: 0.86rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      margin-bottom: 48px;
+    }
+    .btn-ghost {
+      display: inline-block;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-weight: 400;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text);
+      border: 1px solid var(--accent2);
+      padding: 14px 40px;
+      background: transparent;
+      transition: background .3s, color .3s;
+    }
+    .btn-ghost:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 32px;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      color: var(--light);
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── Lightbox ── */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(44,40,40,0.9);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img {
+      max-width: 88vw;
+      max-height: 86vh;
+      object-fit: contain;
+    }
+    .lightbox-close {
+      position: fixed;
+      top: 24px;
+      right: 32px;
+      color: var(--light);
+      font-size: 1.6rem;
+      cursor: pointer;
+      font-weight: 300;
+      letter-spacing: 0;
+      line-height: 1;
+      transition: color .2s;
+    }
+    .lightbox-close:hover { color: #fff; }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 24px; }
+      .hero { padding: 100px 24px 60px; }
+      .section { padding: 72px 24px; }
+      .work-item { grid-template-columns: 1fr; gap: 32px; }
+      .work-item.reverse { direction: ltr; }
+      .about-inner { grid-template-columns: 1fr; gap: 40px; padding: 72px 24px; }
+      .contact-section { padding: 80px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-logo">NOK</div>
+  <ul>
+    <li><a href="#works">Works</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<div style="position:relative;">
+  <div class="hero">
+    <div class="hero-sub">AI Portfolio</div>
+    <h1>
+      生成 AI で<br>
+      <em>成長</em> してきた<br>
+      軌跡
+    </h1>
+    <p class="hero-desc">
+      Claude をパートナーに、Web サイト制作・<br>
+      アプリ開発・ゲーム作りに挑戦してきた記録。<br>
+      コードが書けなくても、アイデアは形になる。
+    </p>
+  </div>
+  <div class="hero-scroll">Scroll</div>
+</div>
+
+<hr class="section-divider">
+
+<!-- Works -->
+<div class="section" id="works">
+  <div class="section-label">Works</div>
+  <div class="works-list">
+
+    <!-- 01 旅行ガイドサイト -->
+    <div class="work-item">
+      <div class="work-visuals">
+        <div class="work-visuals-grid">
+          <div class="work-img-wrap span2">
+            <img class="work-img" src="image/hero-sakura-full-bloom.webp"
+                 alt="桜 旅行ガイドサイト" onclick="openLightbox(this.src)" />
+          </div>
+          <div class="work-img-wrap">
+            <img class="work-img" src="image/cherry-blossom-timeline.webp"
+                 alt="桜前線タイムライン" onclick="openLightbox(this.src)" />
+          </div>
+          <div class="work-img-wrap">
+            <img class="work-img" src="image/night-sakura-illuminated.webp"
+                 alt="夜桜ライトアップ" onclick="openLightbox(this.src)" />
+          </div>
+        </div>
+      </div>
+      <div class="work-info">
+        <div class="work-num">01</div>
+        <div class="work-tag">Web 制作</div>
+        <div class="work-title">国内旅行<br>季節別ガイドサイト</div>
+        <p class="work-desc">
+          観光スポット・名産・グルメを季節ごとにまとめたWebサイト。
+          桜の開花前線タイムラインや夜桜ライトアップ特集など、
+          情報収集から文章・デザインまで Claude と二人三脚で制作しました。
+        </p>
+        <div class="work-tools">
+          <span class="tool-chip">Claude</span>
+          <span class="tool-chip">HTML / CSS</span>
+          <span class="tool-chip">コンテンツ設計</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 02 AIニュースアプリ -->
+    <div class="work-item reverse">
+      <div class="work-img-single">
+        <img src="image/1000028508 (1).jpg"
+             alt="AI ニュースアプリ" onclick="openLightbox(this.src)" />
+      </div>
+      <div class="work-info">
+        <div class="work-num">02</div>
+        <div class="work-tag">アプリ開発</div>
+        <div class="work-title">AI ニュースアプリ</div>
+        <p class="work-desc">
+          ニュースを自動収集・要約し、読み上げてくれるスマホアプリ。
+          「毎朝ニュースをチェックしたい」という日常の課題を
+          Claude との会話だけで形にしました。
+        </p>
+        <div class="work-tools">
+          <span class="tool-chip">Claude</span>
+          <span class="tool-chip">アプリ設計</span>
+          <span class="tool-chip">情報収集自動化</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 ブロック落としゲーム -->
+    <div class="work-item">
+      <div class="work-img-single">
+        <img src="image/スクリーンショット 2026-05-30 171504.png"
+             alt="ブロック落としゲーム" onclick="openLightbox(this.src)" />
+      </div>
+      <div class="work-info">
+        <div class="work-num">03</div>
+        <div class="work-tag">ゲーム開発</div>
+        <div class="work-title">ブロック落としゲーム</div>
+        <p class="work-desc">
+          Claude とペアプログラミングで作ったブラウザ完結のパズルゲーム。
+          HOLD・NEXT・LEVEL などの仕様をチャットで伝えるだけでコードが生成され、
+          「自分でゲームが作れた」という初めての体験になりました。
+        </p>
+        <div class="work-tools">
+          <span class="tool-chip">Claude</span>
+          <span class="tool-chip">JavaScript</span>
+          <span class="tool-chip">ゲームロジック</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- About -->
+<div class="about-section" id="about">
+  <div class="about-inner">
+    <div class="about-left">
+      <div class="section-label" style="margin-bottom:32px;">About</div>
+      <h2>AI 駆け出し<br>会社員、NOK</h2>
+      <p>
+        プログラミング未経験の会社員が、生成 AI を相棒に
+        制作を続けてきた記録です。「やってみよう」の気持ち
+        ひとつで、Web サイト・アプリ・ゲームと守備範囲を
+        広げています。
+      </p>
+    </div>
+    <div class="about-right">
+      <div class="about-block">
+        <div class="about-block-label">Tools</div>
+        <div class="chips">
+          <span class="chip">Claude</span>
+          <span class="chip">HTML / CSS</span>
+          <span class="chip">JavaScript</span>
+        </div>
+      </div>
+      <div class="about-block">
+        <div class="about-block-label">できること</div>
+        <div class="chips">
+          <span class="chip">Web ページ制作</span>
+          <span class="chip">コンテンツ設計</span>
+          <span class="chip">情報収集・整理</span>
+          <span class="chip">アプリ企画</span>
+          <span class="chip">ゲーム制作</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Contact -->
+<div class="contact-section" id="contact">
+  <div class="section-label">Contact</div>
+  <h2>お気軽にどうぞ</h2>
+  <p>AI 活用のご相談・Web ページ制作・なんでもお声がけください。</p>
+  <a class="btn-ghost" href="mailto:naoki.kida024@gmail.com">Get in touch</a>
+</div>
+
+<!-- Footer -->
+<footer>© 2026 NOK &nbsp;·&nbsp; 生成 AI で成長してきた軌跡</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <span class="lightbox-close" onclick="closeLightbox()">✕</span>
+  <img id="lightboxImg" src="" alt="" />
+</div>
+
+<script>
+  // Scroll fade-in
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.work-item').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.08}s`;
+    observer.observe(el);
+  });
+
+  // Lightbox
+  function openLightbox(src) {
+    document.getElementById('lightboxImg').src = src;
+    document.getElementById('lightbox').classList.add('open');
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+</script>
+
+</body>
+</html>

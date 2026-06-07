@@ -1,0 +1,10 @@
+# Claude Code 設定
+image/.claude/
+
+# デザイン参考・レイアウトスクリーンショット（実績画像ではない）
+image/layout/
+image/design_prompt.yaml
+
+# OS
+.DS_Store
+Thumbs.db
