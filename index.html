@@ -14,6 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="image/hero-sakura-full-bloom.webp" fetchpriority="high">
 
   <style>
     :root {
@@ -22,7 +23,7 @@
       --accent:    #E8B4C0;
       --accent2:   #D4A5A5;
       --text:      #2C2828;
-      --muted:     #8C7E7E;
+      --muted:     #6B5E5E;
       --light:     #BFB5B5;
       --border:    #EDE5DE;
       --shadow:    0 2px 12px rgba(0,0,0,0.06);
@@ -454,6 +455,13 @@
       .intro { grid-template-columns: 1fr; gap: 32px; }
       .contact { padding: 100px 28px; }
     }
+    @media (max-width: 768px) {
+      .gallery__grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+      .hero__title { font-size: clamp(2rem, 6vw, 3rem); }
+      .section { padding: 72px 28px; }
+      .process__timeline { grid-template-columns: repeat(2, 1fr); }
+      .process__step::after { display: none; }
+    }
     @media (max-width: 560px) {
       .nav__links { gap: 16px; }
       .nav__links a { font-size: 0.68rem; }
@@ -530,8 +538,9 @@
   <div class="intro reveal">
     <img loading="lazy"
          src="image/hero-sakura-full-bloom.webp"
-         alt="Spring"
+         alt="桜の満開の写真"
          class="intro__image"
+         role="button" tabindex="0"
          onclick="openModal(this.src)">
     <div class="intro__text">
       <h3>About This Portfolio</h3>
@@ -573,6 +582,7 @@
              src="image/hero-sakura-full-bloom.webp"
              alt="国内旅行ガイド ヒーロー"
              class="gallery__card-img"
+             role="button" tabindex="0"
              onclick="openModal(this.src)">
       </div>
       <div class="gallery__card-body">
@@ -593,6 +603,7 @@
              src="image/cherry-blossom-timeline.webp"
              alt="桜前線タイムライン"
              class="gallery__card-img"
+             role="button" tabindex="0"
              onclick="openModal(this.src)">
       </div>
       <div class="gallery__card-body">
@@ -613,6 +624,7 @@
              src="image/night-sakura-illuminated.webp"
              alt="夜桜ライトアップ"
              class="gallery__card-img"
+             role="button" tabindex="0"
              onclick="openModal(this.src)">
       </div>
       <div class="gallery__card-body">
@@ -633,6 +645,7 @@
              src="image/1000028508%20(1).jpg"
              alt="AI ニュースリーダー"
              class="gallery__card-img"
+             role="button" tabindex="0"
              onclick="openModal(this.src)">
       </div>
       <div class="gallery__card-body">
@@ -653,6 +666,7 @@
              src="image/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88%202026-05-30%20171504.png"
              alt="ブロック落としゲーム"
              class="gallery__card-img"
+             role="button" tabindex="0"
              onclick="openModal(this.src)">
       </div>
       <div class="gallery__card-body">
@@ -673,6 +687,7 @@
              src="image/1280px-Imori-ike_with_Mout_Myoko_(7697997840)%20(1).jpg"
              alt="妙高山とイモリ池"
              class="gallery__card-img"
+             role="button" tabindex="0"
              onclick="openModal(this.src)">
       </div>
       <div class="gallery__card-body">
@@ -782,8 +797,8 @@
 <footer>© 2026 NOK &nbsp;·&nbsp; 生成 AI で成長してきた軌跡</footer>
 
 <!-- Modal (lightbox) -->
-<div class="modal" id="modal">
-  <button class="modal__close" onclick="closeModal()" aria-label="閉じる">✕</button>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="画像拡大表示">
+  <button class="modal__close" id="modalClose" onclick="closeModal()" aria-label="閉じる">✕</button>
   <img class="modal__img" id="modalImg" src="" alt="">
 </div>
 
@@ -821,8 +836,9 @@
   const cards = document.querySelectorAll('.gallery__card');
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      filterBtns.forEach(b => b.classList.remove('active'));
+      filterBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
       const f = btn.dataset.filter;
       cards.forEach(c => {
         const show = f === 'all' || c.dataset.category === f;
@@ -830,21 +846,37 @@
       });
     });
   });
+  filterBtns.forEach(btn => {
+    btn.setAttribute('aria-pressed', btn.classList.contains('active') ? 'true' : 'false');
+  });
 
   /* ── Modal (lightbox) ── */
-  function openModal(src) {
-    document.getElementById('modalImg').src = src;
+  let _modalPrevFocus = null;
+  function openModal(src, altText) {
+    _modalPrevFocus = document.activeElement;
+    const img = document.getElementById('modalImg');
+    img.src = src;
+    img.alt = altText || '';
     document.getElementById('modal').classList.add('active');
     document.body.style.overflow = 'hidden';
+    document.getElementById('modalClose').focus();
   }
   function closeModal() {
     document.getElementById('modal').classList.remove('active');
     document.body.style.overflow = '';
+    if (_modalPrevFocus) { _modalPrevFocus.focus(); _modalPrevFocus = null; }
   }
   document.getElementById('modal').addEventListener('click', function(e) {
     if (e.target === this) closeModal();
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  /* ── Keyboard support for clickable images ── */
+  document.querySelectorAll('img[role="button"]').forEach(img => {
+    img.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(img.src, img.alt); }
+    });
+  });
 
   /* ── Mobile nav ── */
   const navToggle = document.getElementById('navToggle');
