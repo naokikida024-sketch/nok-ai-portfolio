@@ -536,12 +536,12 @@
     <h2 class="section__title">AI 駆け出し会社員、NOK</h2>
   </div>
   <div class="intro reveal">
-    <img loading="lazy"
+    <img loading="eager" decoding="async"
          src="image/hero-sakura-full-bloom.webp"
          alt="桜の満開の写真"
          class="intro__image"
-         role="button" tabindex="0"
-         onclick="openModal(this.src)">
+         width="800" height="600"
+         role="button" tabindex="0">
     <div class="intro__text">
       <h3>About This Portfolio</h3>
       <p>普通の会社員として働きながら、生成AIの可能性に惹かれ独学で開発を始めました。「現場で本当に使えるもの」をテーマに、Web サイト・アプリ・ゲームと守備範囲を広げています。</p>
@@ -578,12 +578,12 @@
     <!-- 旅行ガイド 01 -->
     <div class="gallery__card reveal" data-category="web">
       <div class="gallery__card-img-wrap">
-        <img loading="lazy"
+        <img loading="lazy" decoding="async"
              src="image/hero-sakura-full-bloom.webp"
              alt="国内旅行ガイド ヒーロー"
              class="gallery__card-img"
-             role="button" tabindex="0"
-             onclick="openModal(this.src)">
+             width="800" height="500"
+             role="button" tabindex="0">
       </div>
       <div class="gallery__card-body">
         <h3 class="gallery__card-title">国内旅行季節別ガイドサイト</h3>
@@ -599,12 +599,12 @@
     <!-- 旅行ガイド 02 -->
     <div class="gallery__card reveal" data-category="web">
       <div class="gallery__card-img-wrap">
-        <img loading="lazy"
+        <img loading="lazy" decoding="async"
              src="image/cherry-blossom-timeline.webp"
              alt="桜前線タイムライン"
              class="gallery__card-img"
-             role="button" tabindex="0"
-             onclick="openModal(this.src)">
+             width="800" height="500"
+             role="button" tabindex="0">
       </div>
       <div class="gallery__card-body">
         <h3 class="gallery__card-title">桜前線タイムライン</h3>
@@ -620,12 +620,12 @@
     <!-- 旅行ガイド 03 -->
     <div class="gallery__card reveal" data-category="web">
       <div class="gallery__card-img-wrap">
-        <img loading="lazy"
+        <img loading="lazy" decoding="async"
              src="image/night-sakura-illuminated.webp"
              alt="夜桜ライトアップ"
              class="gallery__card-img"
-             role="button" tabindex="0"
-             onclick="openModal(this.src)">
+             width="800" height="500"
+             role="button" tabindex="0">
       </div>
       <div class="gallery__card-body">
         <h3 class="gallery__card-title">夜桜ライトアップ AI ビジュアル</h3>
@@ -641,12 +641,12 @@
     <!-- AI ニュース -->
     <div class="gallery__card reveal" data-category="app">
       <div class="gallery__card-img-wrap">
-        <img loading="lazy"
+        <img loading="lazy" decoding="async"
              src="image/1000028508%20(1).jpg"
              alt="AI ニュースリーダー"
              class="gallery__card-img"
-             role="button" tabindex="0"
-             onclick="openModal(this.src)">
+             width="800" height="500"
+             role="button" tabindex="0">
       </div>
       <div class="gallery__card-body">
         <h3 class="gallery__card-title">AI ニュースリーダー</h3>
@@ -662,12 +662,12 @@
     <!-- ゲーム -->
     <div class="gallery__card reveal" data-category="game">
       <div class="gallery__card-img-wrap">
-        <img loading="lazy"
+        <img loading="lazy" decoding="async"
              src="image/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88%202026-05-30%20171504.png"
              alt="ブロック落としゲーム"
              class="gallery__card-img"
-             role="button" tabindex="0"
-             onclick="openModal(this.src)">
+             width="800" height="500"
+             role="button" tabindex="0">
       </div>
       <div class="gallery__card-body">
         <h3 class="gallery__card-title">ブロック落としゲーム</h3>
@@ -683,12 +683,12 @@
     <!-- 妙高 -->
     <div class="gallery__card reveal" data-category="web">
       <div class="gallery__card-img-wrap">
-        <img loading="lazy"
+        <img loading="lazy" decoding="async"
              src="image/1280px-Imori-ike_with_Mout_Myoko_(7697997840)%20(1).jpg"
              alt="妙高山とイモリ池"
              class="gallery__card-img"
-             role="button" tabindex="0"
-             onclick="openModal(this.src)">
+             width="800" height="500"
+             role="button" tabindex="0">
       </div>
       <div class="gallery__card-body">
         <h3 class="gallery__card-title">旅行ガイド — 自然写真素材</h3>
@@ -706,9 +706,10 @@
 
 <!-- Band -->
 <div class="band">
-  <img loading="lazy"
+  <img loading="lazy" decoding="async"
        src="image/1280px-Imori-ike_with_Mout_Myoko_(7697997840)%20(1).jpg"
-       alt="妙高山とイモリ池">
+       alt="妙高山とイモリ池"
+       width="1200" height="600">
   <span class="band__caption">Nature Photography — Imori-ike, Myoko</span>
 </div>
 
@@ -798,95 +799,132 @@
 
 <!-- Modal (lightbox) -->
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="画像拡大表示">
-  <button class="modal__close" id="modalClose" onclick="closeModal()" aria-label="閉じる">✕</button>
+  <button class="modal__close" id="modalClose" aria-label="閉じる">✕</button>
   <img class="modal__img" id="modalImg" src="" alt="">
 </div>
 
 <script>
-  /* ── Nav: transparent → solid ── */
-  const nav = document.getElementById('nav');
+(function () {
+  /* ─── Constants ─────────────────────────────────────────── */
+  const NAV_SCROLL_THRESHOLD   = 64;   // matches .nav height (px)
+  const REVEAL_STAGGER_STEP    = 0.09; // seconds per stagger column
+  const REVEAL_GRID_COLUMNS    = 3;    // gallery grid column count
+  const ALLOWED_IMG_EXTS       = /\.(png|jpe?g|webp|gif|avif|svg)(\?.*)?$/i;
+
+  /* ─── DOM references ────────────────────────────────────── */
+  const navEl        = document.getElementById('nav');
+  const heroBgEl     = document.getElementById('heroBg');
+  const modalEl      = document.getElementById('modal');
+  const modalImgEl   = document.getElementById('modalImg');
+  const modalCloseEl = document.getElementById('modalClose');
+  const navToggleEl  = document.getElementById('navToggle');
+  const navOverlayEl = document.getElementById('navOverlay');
+  const navCloseEl   = document.getElementById('navClose');
+
+  /* ─── Nav: transparent → solid on scroll ───────────────── */
   window.addEventListener('scroll', () => {
-    nav.classList.toggle('scrolled', window.scrollY > 60);
+    navEl.classList.toggle('scrolled', window.scrollY > NAV_SCROLL_THRESHOLD);
   }, { passive: true });
 
-  /* ── Hero bg scale on load ── */
+  /* ─── Hero bg: scale-in on load ────────────────────────── */
   window.addEventListener('load', () => {
-    document.getElementById('heroBg').classList.add('loaded');
+    heroBgEl.classList.add('loaded');
   });
 
-  /* ── Scroll reveal ── */
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        io.unobserve(e.target);
+  /* ─── Scroll reveal ─────────────────────────────────────── */
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
       }
     });
   }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
 
-  document.querySelectorAll('.reveal').forEach((el, i) => {
-    if (el.parentElement && el.parentElement.classList.contains('gallery__grid')) {
-      el.style.transitionDelay = `${(i % 3) * 0.09}s`;
+  document.querySelectorAll('.reveal').forEach((el, index) => {
+    if (el.parentElement?.classList.contains('gallery__grid')) {
+      el.style.transitionDelay = `${(index % REVEAL_GRID_COLUMNS) * REVEAL_STAGGER_STEP}s`;
     }
-    io.observe(el);
+    revealObserver.observe(el);
   });
 
-  /* ── Gallery filter ── */
-  const filterBtns = document.querySelectorAll('.gallery__filter button');
-  const cards = document.querySelectorAll('.gallery__card');
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      filterBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
-      btn.classList.add('active');
-      btn.setAttribute('aria-pressed', 'true');
-      const f = btn.dataset.filter;
-      cards.forEach(c => {
-        const show = f === 'all' || c.dataset.category === f;
-        c.style.display = show ? '' : 'none';
-      });
+  /* ─── Gallery filter ────────────────────────────────────── */
+  /**
+   * @param {string} filterValue
+   * @param {NodeListOf<Element>} cards
+   */
+  function applyFilter(filterValue, cards) {
+    cards.forEach(card => {
+      const isVisible = filterValue === 'all' || card.dataset.category === filterValue;
+      card.style.display = isVisible ? '' : 'none';
     });
-  });
+  }
+
+  const filterBtns = document.querySelectorAll('.gallery__filter button');
+  const galleryCards = document.querySelectorAll('.gallery__card');
+
   filterBtns.forEach(btn => {
     btn.setAttribute('aria-pressed', btn.classList.contains('active') ? 'true' : 'false');
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(other => { other.classList.remove('active'); other.setAttribute('aria-pressed', 'false'); });
+      btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
+      applyFilter(btn.dataset.filter, galleryCards);
+    });
   });
 
-  /* ── Modal (lightbox) ── */
-  let _modalPrevFocus = null;
+  /* ─── Modal (lightbox) ──────────────────────────────────── */
+  /** @param {string} src */
+  function isSafeImageSrc(src) {
+    try {
+      const url = new URL(src, location.href);
+      return url.origin === location.origin && ALLOWED_IMG_EXTS.test(url.pathname);
+    } catch { return false; }
+  }
+
+  /** @type {HTMLElement|null} */
+  let prevFocusedEl = null;
+
+  /**
+   * @param {string} src
+   * @param {string} [altText]
+   */
   function openModal(src, altText) {
-    _modalPrevFocus = document.activeElement;
-    const img = document.getElementById('modalImg');
-    img.src = src;
-    img.alt = altText || '';
-    document.getElementById('modal').classList.add('active');
+    if (!isSafeImageSrc(src)) return;
+    prevFocusedEl = document.activeElement;
+    modalImgEl.src = src;
+    modalImgEl.alt = altText || '';
+    modalEl.classList.add('active');
     document.body.style.overflow = 'hidden';
-    document.getElementById('modalClose').focus();
+    modalCloseEl.focus();
   }
-  function closeModal() {
-    document.getElementById('modal').classList.remove('active');
-    document.body.style.overflow = '';
-    if (_modalPrevFocus) { _modalPrevFocus.focus(); _modalPrevFocus = null; }
-  }
-  document.getElementById('modal').addEventListener('click', function(e) {
-    if (e.target === this) closeModal();
-  });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-  /* ── Keyboard support for clickable images ── */
+  function closeModal() {
+    modalEl.classList.remove('active');
+    document.body.style.overflow = '';
+    prevFocusedEl?.focus();
+    prevFocusedEl = null;
+  }
+
+  modalEl.addEventListener('click',    e => { if (e.target === modalEl) closeModal(); });
+  modalCloseEl.addEventListener('click', () => closeModal());
+  document.addEventListener('keydown',  e => { if (e.key === 'Escape') closeModal(); });
+
+  /* ─── Click & keyboard for all image buttons ────────────── */
   document.querySelectorAll('img[role="button"]').forEach(img => {
-    img.addEventListener('keydown', e => {
+    img.addEventListener('click',   ()  => openModal(img.src, img.alt));
+    img.addEventListener('keydown', e   => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(img.src, img.alt); }
     });
   });
 
-  /* ── Mobile nav ── */
-  const navToggle = document.getElementById('navToggle');
-  const navOverlay = document.getElementById('navOverlay');
-  const navClose = document.getElementById('navClose');
-  navToggle.addEventListener('click', () => navOverlay.classList.add('open'));
-  navClose.addEventListener('click', () => navOverlay.classList.remove('open'));
-  document.querySelectorAll('.nav__overlay-link').forEach(a => {
-    a.addEventListener('click', () => navOverlay.classList.remove('open'));
+  /* ─── Mobile nav ────────────────────────────────────────── */
+  navToggleEl.addEventListener('click', () => navOverlayEl.classList.add('open'));
+  navCloseEl.addEventListener('click',  () => navOverlayEl.classList.remove('open'));
+  document.querySelectorAll('.nav__overlay-link').forEach(link => {
+    link.addEventListener('click', () => navOverlayEl.classList.remove('open'));
   });
+}());
 </script>
 
 </body>
