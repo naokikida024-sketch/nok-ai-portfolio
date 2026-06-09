@@ -13,7 +13,7 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet" crossorigin="anonymous">
   <link rel="preload" as="image" href="image/hero-sakura-full-bloom.webp" fetchpriority="high">
 
   <style>
@@ -536,7 +536,7 @@
     <h2 class="section__title">AI 駆け出し会社員、NOK</h2>
   </div>
   <div class="intro reveal">
-    <img loading="eager" decoding="async"
+    <img loading="lazy" decoding="async"
          src="image/hero-sakura-full-bloom.webp"
          alt="桜の満開の写真"
          class="intro__image"
@@ -800,16 +800,18 @@
 <!-- Modal (lightbox) -->
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="画像拡大表示">
   <button class="modal__close" id="modalClose" aria-label="閉じる">✕</button>
-  <img class="modal__img" id="modalImg" src="" alt="">
+  <img class="modal__img" id="modalImg" src="" alt="" width="1200" height="800" decoding="async">
 </div>
 
 <script>
 (function () {
   /* ─── Constants ─────────────────────────────────────────── */
-  const NAV_SCROLL_THRESHOLD   = 64;   // matches .nav height (px)
-  const REVEAL_STAGGER_STEP    = 0.09; // seconds per stagger column
-  const REVEAL_GRID_COLUMNS    = 3;    // gallery grid column count
-  const ALLOWED_IMG_EXTS       = /\.(png|jpe?g|webp|gif|avif|svg)(\?.*)?$/i;
+  const NAV_SCROLL_THRESHOLD          = 64;                   // matches .nav height (px)
+  const REVEAL_STAGGER_STEP           = 0.09;                 // seconds per stagger column
+  const REVEAL_GRID_COLUMNS           = 3;                    // gallery grid column count
+  const REVEAL_INTERSECTION_THRESHOLD = 0.08;                 // fraction of element visible before triggering reveal
+  const REVEAL_ROOT_MARGIN            = '0px 0px -40px 0px';  // shrink bottom viewport edge to trigger reveal earlier
+  const ALLOWED_IMG_EXTS              = /\.(png|jpe?g|webp|gif|avif|svg)(\?.*)?$/i;
 
   /* ─── DOM references ────────────────────────────────────── */
   const navEl        = document.getElementById('nav');
@@ -832,20 +834,29 @@
   });
 
   /* ─── Scroll reveal ─────────────────────────────────────── */
-  const revealObserver = new IntersectionObserver((entries) => {
+  /**
+   * IntersectionObserver callback: adds .visible class and stops observing.
+   * @param {IntersectionObserverEntry[]} entries
+   */
+  function handleRevealIntersection(entries) {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
         revealObserver.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  }
 
-  document.querySelectorAll('.reveal').forEach((el, index) => {
-    if (el.parentElement?.classList.contains('gallery__grid')) {
-      el.style.transitionDelay = `${(index % REVEAL_GRID_COLUMNS) * REVEAL_STAGGER_STEP}s`;
+  const revealObserver = new IntersectionObserver(
+    handleRevealIntersection,
+    { threshold: REVEAL_INTERSECTION_THRESHOLD, rootMargin: REVEAL_ROOT_MARGIN }
+  );
+
+  document.querySelectorAll('.reveal').forEach((revealEl, revealIndex) => {
+    if (revealEl.parentElement?.classList.contains('gallery__grid')) {
+      revealEl.style.transitionDelay = `${(revealIndex % REVEAL_GRID_COLUMNS) * REVEAL_STAGGER_STEP}s`;
     }
-    revealObserver.observe(el);
+    revealObserver.observe(revealEl);
   });
 
   /* ─── Gallery filter ────────────────────────────────────── */
@@ -879,7 +890,7 @@
     try {
       const url = new URL(src, location.href);
       return url.origin === location.origin && ALLOWED_IMG_EXTS.test(url.pathname);
-    } catch { return false; }
+    } catch (_err) { /* invalid URL — treat as unsafe */ return false; }
   }
 
   /** @type {HTMLElement|null} */
@@ -906,15 +917,15 @@
     prevFocusedEl = null;
   }
 
-  modalEl.addEventListener('click',    e => { if (e.target === modalEl) closeModal(); });
+  modalEl.addEventListener('click',    event => { if (event.target === modalEl) closeModal(); });
   modalCloseEl.addEventListener('click', () => closeModal());
-  document.addEventListener('keydown',  e => { if (e.key === 'Escape') closeModal(); });
+  document.addEventListener('keydown',  event => { if (event.key === 'Escape') closeModal(); });
 
   /* ─── Click & keyboard for all image buttons ────────────── */
   document.querySelectorAll('img[role="button"]').forEach(img => {
-    img.addEventListener('click',   ()  => openModal(img.src, img.alt));
-    img.addEventListener('keydown', e   => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(img.src, img.alt); }
+    img.addEventListener('click',   () => openModal(img.src, img.alt));
+    img.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openModal(img.src, img.alt); }
     });
   });
 
