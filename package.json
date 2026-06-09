@@ -1,0 +1,26 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/naokikida024-sketch/nok-ai-portfolio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/naokikida024-sketch/nok-ai-portfolio/issues"
+  },
+  "homepage": "https://github.com/naokikida024-sketch/nok-ai-portfolio#readme",
+  "devDependencies": {
+    "@vitest/browser": "^4.1.8",
+    "jsdom": "^29.1.1",
+    "vitest": "^4.1.8"
+  }
+}
