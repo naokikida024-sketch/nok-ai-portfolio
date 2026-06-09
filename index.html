@@ -232,16 +232,17 @@
       opacity: 0; animation: fadeIn .8s var(--ease) 1.4s forwards;
     }
     .hero__scroll::after {
-      content: ''; width: 50px; height: 1px;
+      content: ''; width: 70px; height: 1px;
       background: rgba(255,255,255,0.3);
+      transform-origin: left;
       animation: scrollPulse 2.4s ease-in-out infinite;
     }
 
     @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
     @keyframes fadeIn { to { opacity: 1; } }
     @keyframes scrollPulse {
-      0%, 100% { width: 50px; opacity: 0.3; }
-      50%       { width: 70px; opacity: 0.7; }
+      0%, 100% { transform: scaleX(0.71); opacity: 0.3; }
+      50%       { transform: scaleX(1);    opacity: 0.7; }
     }
 
     /* ── Section base ── */
@@ -250,7 +251,7 @@
     .section__header { margin-bottom: 60px; }
     .section__label {
       font-size: 0.62rem; letter-spacing: 0.26em; text-transform: uppercase;
-      color: var(--light);
+      color: var(--muted);
       display: flex; align-items: center; gap: 14px;
       margin-bottom: 14px;
     }
@@ -296,7 +297,7 @@
     .gallery__filter button {
       font-family: inherit; font-size: 0.73rem; letter-spacing: 0.1em;
       text-transform: uppercase; background: none;
-      border: none; color: var(--light);
+      border: none; color: var(--muted);
       cursor: pointer; padding: 6px 18px;
       border-bottom: 2px solid transparent;
       transition: color .3s, border-color .3s;
@@ -348,7 +349,7 @@
     .band__caption {
       position: absolute; bottom: 24px; right: 40px;
       font-size: 0.63rem; letter-spacing: 0.22em; text-transform: uppercase;
-      color: rgba(255,255,255,0.52);
+      color: rgba(255,255,255,0.87);
     }
 
     /* ── Process ── */
@@ -412,7 +413,7 @@
       background: linear-gradient(to top, rgba(44,40,40,0.6) 0%, transparent 60%);
     }
     .contact__inner { position: relative; z-index: 1; max-width: 540px; }
-    .contact .section__label { justify-content: center; color: rgba(255,255,255,0.38); }
+    .contact .section__label { justify-content: center; color: rgba(255,255,255,0.7); }
     .contact .section__label::before { background: var(--accent); }
     .contact h2 {
       font-weight: 300;
@@ -420,7 +421,7 @@
       letter-spacing: 0.07em; color: #fff;
       margin: 16px 0 18px;
     }
-    .contact p { font-size: 0.86rem; color: rgba(255,255,255,0.52); letter-spacing: 0.04em; margin-bottom: 48px; }
+    .contact p { font-size: 0.86rem; color: rgba(255,255,255,0.87); letter-spacing: 0.04em; margin-bottom: 48px; }
     .btn-ghost {
       display: inline-block;
       font-weight: 400; font-size: 0.72rem; letter-spacing: 0.22em;
@@ -488,7 +489,20 @@
     }
     @media (prefers-reduced-motion: reduce) {
       .petal { animation: none; opacity: 0 !important; }
+      /* Disable hero entry animations */
+      .hero__title, .hero__lead, .hero__scroll,
+      .hero__scroll::after,
+      [class^="hero__"] { animation: none !important; opacity: 1 !important; transform: none !important; }
+      /* Disable scroll reveal transitions */
+      .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
     }
+    /* ── img-btn: <button> wrapper for clickable images ─────── */
+    .img-btn {
+      display: block; width: 100%; padding: 0; margin: 0;
+      background: none; border: none; cursor: pointer;
+      border-radius: inherit;
+    }
+    .img-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   </style>
 </head>
 <body>
@@ -502,19 +516,19 @@
 
 <!-- Nav -->
 <nav class="nav" id="nav">
-  <div class="nav__logo">NOK</div>
+  <a href="#" class="nav__logo" aria-label="ページトップへ戻る">NOK</a>
   <ul class="nav__links">
     <li><a href="#about">About</a></li>
     <li><a href="#works">Works</a></li>
     <li><a href="#process">Process</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  <button class="nav__toggle" id="navToggle" aria-label="メニューを開く">☰</button>
+  <button class="nav__toggle" id="navToggle" aria-label="メニューを開く" aria-expanded="false">☰</button>
 </nav>
 
 <!-- Mobile overlay menu -->
-<div class="nav__overlay" id="navOverlay">
-  <button class="nav__overlay-close" id="navClose" aria-label="閉じる">✕</button>
+<div class="nav__overlay" id="navOverlay" role="dialog" aria-modal="true" aria-label="ナビゲーションメニュー" aria-hidden="true">
+  <button class="nav__overlay-close" id="navClose" aria-label="メニューを閉じる">✕</button>
   <a href="#about" class="nav__overlay-link">About</a>
   <a href="#works" class="nav__overlay-link">Works</a>
   <a href="#process" class="nav__overlay-link">Process</a>
@@ -539,7 +553,7 @@
     </p>
     <a class="hero__cta" href="#works">View Works</a>
   </div>
-  <div class="hero__scroll">Scroll</div>
+  <div class="hero__scroll" aria-hidden="true">Scroll</div>
 </section>
 
 <hr class="section-divider">
@@ -551,12 +565,13 @@
     <h2 class="section__title">AI 駆け出し会社員、NOK</h2>
   </div>
   <div class="intro reveal">
-    <img loading="lazy" decoding="async"
-         src="image/hero-sakura-full-bloom.webp"
-         alt="桜の満開の写真"
-         class="intro__image"
-         width="800" height="600"
-         role="button" tabindex="0">
+    <button class="img-btn" aria-label="桜の満開の写真を拡大表示">
+      <img loading="lazy" decoding="async"
+           src="image/hero-sakura-full-bloom.webp"
+           alt="桜の満開の写真"
+           class="intro__image"
+           width="800" height="600">
+    </button>
     <div class="intro__text">
       <h3>About This Portfolio</h3>
       <p>普通の会社員として働きながら、生成AIの可能性に惹かれ独学で開発を始めました。「現場で本当に使えるもの」をテーマに、Web サイト・アプリ・ゲームと守備範囲を広げています。</p>
@@ -593,12 +608,13 @@
     <!-- 旅行ガイド 01 -->
     <div class="gallery__card reveal" data-category="web">
       <div class="gallery__card-img-wrap">
-        <img loading="lazy" decoding="async"
-             src="image/hero-sakura-full-bloom.webp"
-             alt="国内旅行ガイド ヒーロー"
-             class="gallery__card-img"
-             width="800" height="500"
-             role="button" tabindex="0">
+        <button class="img-btn" aria-label="国内旅行ガイド ヒーローを拡大表示">
+          <img loading="lazy" decoding="async"
+               src="image/hero-sakura-full-bloom.webp"
+               alt="国内旅行ガイド ヒーロー"
+               class="gallery__card-img"
+               width="800" height="500">
+        </button>
       </div>
       <div class="gallery__card-body">
         <h3 class="gallery__card-title">国内旅行季節別ガイドサイト</h3>
@@ -614,12 +630,13 @@
     <!-- 旅行ガイド 02 -->
     <div class="gallery__card reveal" data-category="web">
       <div class="gallery__card-img-wrap">
-        <img loading="lazy" decoding="async"
-             src="image/cherry-blossom-timeline.webp"
-             alt="桜前線タイムライン"
-             class="gallery__card-img"
-             width="800" height="500"
-             role="button" tabindex="0">
+        <button class="img-btn" aria-label="桜前線タイムラインを拡大表示">
+          <img loading="lazy" decoding="async"
+               src="image/cherry-blossom-timeline.webp"
+               alt="桜前線タイムライン"
+               class="gallery__card-img"
+               width="800" height="500">
+        </button>
       </div>
       <div class="gallery__card-body">
         <h3 class="gallery__card-title">桜前線タイムライン</h3>
@@ -635,12 +652,13 @@
     <!-- 旅行ガイド 03 -->
     <div class="gallery__card reveal" data-category="web">
       <div class="gallery__card-img-wrap">
-        <img loading="lazy" decoding="async"
-             src="image/night-sakura-illuminated.webp"
-             alt="夜桜ライトアップ"
-             class="gallery__card-img"
-             width="800" height="500"
-             role="button" tabindex="0">
+        <button class="img-btn" aria-label="夜桜ライトアップを拡大表示">
+          <img loading="lazy" decoding="async"
+               src="image/night-sakura-illuminated.webp"
+               alt="夜桜ライトアップ"
+               class="gallery__card-img"
+               width="800" height="500">
+        </button>
       </div>
       <div class="gallery__card-body">
         <h3 class="gallery__card-title">夜桜ライトアップ AI ビジュアル</h3>
@@ -656,12 +674,13 @@
     <!-- AI ニュース -->
     <div class="gallery__card reveal" data-category="app">
       <div class="gallery__card-img-wrap">
-        <img loading="lazy" decoding="async"
-             src="image/1000028508%20(1).jpg"
-             alt="AI ニュースリーダー"
-             class="gallery__card-img"
-             width="800" height="500"
-             role="button" tabindex="0">
+        <button class="img-btn" aria-label="AI ニュースリーダーを拡大表示">
+          <img loading="lazy" decoding="async"
+               src="image/1000028508%20(1).jpg"
+               alt="AI ニュースリーダー"
+               class="gallery__card-img"
+               width="800" height="500">
+        </button>
       </div>
       <div class="gallery__card-body">
         <h3 class="gallery__card-title">AI ニュースリーダー</h3>
@@ -677,12 +696,13 @@
     <!-- ゲーム -->
     <div class="gallery__card reveal" data-category="game">
       <div class="gallery__card-img-wrap">
-        <img loading="lazy" decoding="async"
-             src="image/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88%202026-05-30%20171504.png"
-             alt="ブロック落としゲーム"
-             class="gallery__card-img"
-             width="800" height="500"
-             role="button" tabindex="0">
+        <button class="img-btn" aria-label="ブロック落としゲームを拡大表示">
+          <img loading="lazy" decoding="async"
+               src="image/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88%202026-05-30%20171504.png"
+               alt="ブロック落としゲーム"
+               class="gallery__card-img"
+               width="800" height="500">
+        </button>
       </div>
       <div class="gallery__card-body">
         <h3 class="gallery__card-title">ブロック落としゲーム</h3>
@@ -698,12 +718,13 @@
     <!-- 妙高 -->
     <div class="gallery__card reveal" data-category="web">
       <div class="gallery__card-img-wrap">
-        <img loading="lazy" decoding="async"
-             src="image/1280px-Imori-ike_with_Mout_Myoko_(7697997840)%20(1).jpg"
-             alt="妙高山とイモリ池"
-             class="gallery__card-img"
-             width="800" height="500"
-             role="button" tabindex="0">
+        <button class="img-btn" aria-label="妙高山とイモリ池を拡大表示">
+          <img loading="lazy" decoding="async"
+               src="image/1280px-Imori-ike_with_Mout_Myoko_(7697997840)%20(1).jpg"
+               alt="妙高山とイモリ池"
+               class="gallery__card-img"
+               width="800" height="500">
+        </button>
       </div>
       <div class="gallery__card-body">
         <h3 class="gallery__card-title">旅行ガイド — 自然写真素材</h3>
@@ -837,15 +858,21 @@
   const navToggleEl  = document.getElementById('navToggle');
   const navOverlayEl = document.getElementById('navOverlay');
   const navCloseEl   = document.getElementById('navClose');
+  const introImgEl   = document.querySelector('.intro__image');
+
+  /* ─── Intro image: hide on load failure ────────────────── */
+  if (introImgEl) {
+    introImgEl.onerror = () => { introImgEl.closest('.img-btn')?.style.setProperty('display', 'none'); };
+  }
 
   /* ─── Nav: transparent → solid on scroll ───────────────── */
   window.addEventListener('scroll', () => {
-    navEl.classList.toggle('scrolled', window.scrollY > NAV_SCROLL_THRESHOLD);
+    navEl?.classList.toggle('scrolled', window.scrollY > NAV_SCROLL_THRESHOLD);
   }, { passive: true });
 
   /* ─── Hero bg: scale-in on load ────────────────────────── */
   window.addEventListener('load', () => {
-    heroBgEl.classList.add('loaded');
+    heroBgEl?.classList.add('loaded');
   });
 
   /* ─── Scroll reveal ─────────────────────────────────────── */
@@ -921,6 +948,7 @@
   function openModal(src, altText = '') {
     if (!isSafeImageSrc(src)) return;
     prevFocusedEl = document.activeElement;
+    modalImgEl.onerror = () => closeModal();
     modalImgEl.src = src;
     modalImgEl.alt = altText;
     modalEl.classList.add('active');
@@ -935,23 +963,32 @@
     prevFocusedEl = null;
   }
 
-  modalEl.addEventListener('click',    event => { if (event.target === modalEl) closeModal(); });
-  modalCloseEl.addEventListener('click', () => closeModal());
-  document.addEventListener('keydown',  event => { if (event.key === 'Escape') closeModal(); });
+  modalEl?.addEventListener('click',    event => { if (event.target === modalEl) closeModal(); });
+  modalCloseEl?.addEventListener('click', () => closeModal());
+  document.addEventListener('keydown',  event => {
+    if (event.key === 'Escape' && modalEl?.classList.contains('active')) closeModal();
+  });
 
   /* ─── Click & keyboard for all image buttons ────────────── */
-  document.querySelectorAll('img[role="button"]').forEach(img => {
-    img.addEventListener('click',   () => openModal(img.src, img.alt));
-    img.addEventListener('keydown', event => {
-      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openModal(img.src, img.alt); }
-    });
+  document.querySelectorAll('button.img-btn').forEach(btn => {
+    const img = btn.querySelector('img');
+    btn.addEventListener('click', () => openModal(img.src, img.alt));
   });
 
   /* ─── Mobile nav ────────────────────────────────────────── */
-  function closeOverlay() { navOverlayEl.classList.remove('open'); }
+  function openOverlay() {
+    navOverlayEl?.classList.add('open');
+    navOverlayEl?.removeAttribute('aria-hidden');
+    navToggleEl?.setAttribute('aria-expanded', 'true');
+  }
+  function closeOverlay() {
+    navOverlayEl?.classList.remove('open');
+    navOverlayEl?.setAttribute('aria-hidden', 'true');
+    navToggleEl?.setAttribute('aria-expanded', 'false');
+  }
 
-  navToggleEl.addEventListener('click', () => navOverlayEl.classList.add('open'));
-  navCloseEl.addEventListener('click',  closeOverlay);
+  navToggleEl?.addEventListener('click', openOverlay);
+  navCloseEl?.addEventListener('click',  closeOverlay);
   document.querySelectorAll('.nav__overlay-link').forEach(link => {
     link.addEventListener('click', closeOverlay);
   });
