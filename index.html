@@ -66,6 +66,7 @@
       border-radius: 50% 0 50% 50%;
       opacity: 0;
       animation: fall linear infinite;
+      will-change: transform, opacity;
     }
     .petal:nth-child(1) { left:  8%; animation-duration: 14s; animation-delay:  0s; width:  9px; height:  9px; opacity: 0.28; }
     .petal:nth-child(2) { left: 22%; animation-duration: 18s; animation-delay:  3s; width:  7px; height:  7px; opacity: 0.18; }
@@ -185,7 +186,7 @@
       padding: 0 80px;
       max-width: 680px;
       opacity: 0;
-      animation: heroFadeUp 1s var(--ease) .2s forwards;
+      animation: fadeIn 1s var(--ease) .2s forwards;
     }
     .hero__eyebrow {
       font-size: 0.66rem; letter-spacing: 0.32em; text-transform: uppercase;
@@ -238,7 +239,6 @@
 
     @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
     @keyframes fadeIn { to { opacity: 1; } }
-    @keyframes heroFadeUp { to { opacity: 1; } }
     @keyframes scrollPulse {
       0%, 100% { width: 50px; opacity: 0.3; }
       50%       { width: 70px; opacity: 0.7; }
@@ -438,6 +438,9 @@
       border-top: 1px solid var(--border);
     }
 
+    /* ── Scroll lock (used by modal) ── */
+    body.scroll-locked { overflow: hidden; }
+
     /* ── Modal (lightbox) ── */
     .modal {
       display: none; position: fixed; inset: 0; z-index: 1000;
@@ -474,16 +477,17 @@
       .process__step::after { display: none; }
     }
     @media (max-width: 560px) {
-      .nav__links { gap: 16px; }
-      .nav__links a { font-size: 0.68rem; }
+      /* .nav__links は display:none のため gap/font-size は不要 */
       .hero__title { font-size: 2.2rem; }
       .hero__content { padding: 0 20px; }
       .hero__scroll { left: 20px; }
       .section { padding: 64px 20px; }
       .gallery__grid { grid-template-columns: 1fr; }
-      .process__step::after { display: none; }
       .process__timeline { gap: 8px; }
       .contact { padding: 80px 20px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .petal { animation: none; opacity: 0 !important; }
     }
   </style>
 </head>
@@ -901,7 +905,10 @@
     try {
       const url = new URL(src, location.href);
       return url.origin === location.origin && ALLOWED_IMG_EXTS.test(url.pathname);
-    } catch (_err) { /* invalid URL — treat as unsafe */ return false; }
+    } catch (_err) {
+      /* invalid URL — treat as unsafe */
+      return false;
+    }
   }
 
   /** @type {HTMLElement|null} */
@@ -911,19 +918,19 @@
    * @param {string} src
    * @param {string} [altText]
    */
-  function openModal(src, altText) {
+  function openModal(src, altText = '') {
     if (!isSafeImageSrc(src)) return;
     prevFocusedEl = document.activeElement;
     modalImgEl.src = src;
-    modalImgEl.alt = altText || '';
+    modalImgEl.alt = altText;
     modalEl.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('scroll-locked');
     modalCloseEl.focus();
   }
 
   function closeModal() {
     modalEl.classList.remove('active');
-    document.body.style.overflow = '';
+    document.body.classList.remove('scroll-locked');
     prevFocusedEl?.focus();
     prevFocusedEl = null;
   }
@@ -941,10 +948,12 @@
   });
 
   /* ─── Mobile nav ────────────────────────────────────────── */
+  function closeOverlay() { navOverlayEl.classList.remove('open'); }
+
   navToggleEl.addEventListener('click', () => navOverlayEl.classList.add('open'));
-  navCloseEl.addEventListener('click',  () => navOverlayEl.classList.remove('open'));
+  navCloseEl.addEventListener('click',  closeOverlay);
   document.querySelectorAll('.nav__overlay-link').forEach(link => {
-    link.addEventListener('click', () => navOverlayEl.classList.remove('open'));
+    link.addEventListener('click', closeOverlay);
   });
 }());
 </script>
