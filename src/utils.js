@@ -7,8 +7,13 @@ export const ALLOWED_IMG_EXTS = /\.(png|jpe?g|webp|gif|avif|svg)(\?.*)?$/i;
 
 /**
  * src が同一オリジン かつ 許可拡張子 か検証する
+ *
+ * NOTE: index.html のインライン JS にも同名・同ロジックの関数が存在する。
+ *       こちらはユニットテスト用に抽出したもので、base 引数で origin を差し替えられる。
+ *       将来 index.html をモジュール化する際はこちらに一本化すること。
+ *
  * @param {string} src
- * @param {string} [base] - テスト時に origin を注入できるよう引数化
+ * @param {string} [base] - テスト時に origin を注入できるよう引数化（本番は location.href 相当）
  * @returns {boolean}
  */
 export function isSafeImageSrc(src, base = 'https://example.com') {
