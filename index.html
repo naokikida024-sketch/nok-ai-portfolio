@@ -15,9 +15,9 @@
     default-src 'self';
     style-src   'self' 'unsafe-inline' https://fonts.googleapis.com;
     font-src    'self' https://fonts.gstatic.com;
-    img-src     'self' data:;
+    img-src     'self' data: blob:;
     script-src  'self' 'unsafe-inline';
-    connect-src 'none';
+    connect-src 'self';
     object-src  'none';
     base-uri    'self';
     form-action 'none';
@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Async font load: media=print → onload で all に切り替えてレンダーブロッキングを回避 -->
-  <link rel="preload" as="style"
+  <link rel="preload" as="style" crossorigin
         href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap"
         rel="stylesheet" media="print" onload="this.media='all'" crossorigin="anonymous">
